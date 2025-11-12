@@ -1,0 +1,379 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: #ffffff;
+    color: #000000;
+    line-height: 1.7;
+    overflow-x: hidden;
+    font-size: 18px;
+    position: relative;
+}
+
+/* Game of Life Canvas */
+#gameOfLife {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0.5;
+    cursor: default;
+}
+
+/* Pixel elements container */
+.pixel-container {
+    display: none; /* Completely hide for now */
+}
+
+/* ASCII elements - only on sides */
+.pixel-robot,
+.pixel-bird,
+.pixel-rocket,
+.pixel-star,
+.pixel-heart {
+    position: absolute;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    line-height: 1.2;
+    white-space: pre;
+    letter-spacing: 0px;
+    opacity: 0.8;
+    will-change: transform;
+    z-index: 1;
+}
+
+/* Left side elements */
+.robot-1 {
+    top: 15%;
+    left: 3%;
+    color: #ff6b35;
+    animation: float-robot-1 8s ease-in-out infinite;
+}
+
+.bird-1 {
+    top: 45%;
+    left: 5%;
+    color: #48dbfb;
+    animation: float-bird-1 4s ease-in-out infinite;
+}
+
+.heart-1 {
+    top: 75%;
+    left: 2%;
+    color: #fd79a8;
+    animation: float-heart-1 7s ease-in-out infinite;
+}
+
+/* Right side elements */
+.rocket-1 {
+    top: 20%;
+    right: 3%;
+    color: #ff6348;
+    animation: float-rocket-1 5s ease-in-out infinite;
+}
+
+.star-1 {
+    top: 60%;
+    right: 4%;
+    color: #feca57;
+    animation: float-star-1 3s ease-in-out infinite;
+}
+
+/* More obvious floating animations - varying speeds */
+@keyframes float-robot-1 {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(8px, -8px); }
+    50% { transform: translate(6px, 8px); }
+    75% { transform: translate(-6px, 6px); }
+}
+
+/* Bird - fast and erratic */
+@keyframes float-bird-1 {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(12px, -10px); }
+    40% { transform: translate(-8px, -6px); }
+    60% { transform: translate(10px, 8px); }
+    80% { transform: translate(-8px, 12px); }
+}
+
+/* Rocket - fast upward */
+@keyframes float-rocket-1 {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(-4px, -15px); }
+    50% { transform: translate(2px, -8px); }
+    75% { transform: translate(-6px, -18px); }
+}
+
+/* Star - very fast twinkling */
+@keyframes float-star-1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(-6px, 6px) scale(1.2); }
+    50% { transform: translate(4px, -6px) scale(0.9); }
+    75% { transform: translate(-8px, 4px) scale(1.1); }
+}
+
+/* Heart - gentle pulse */
+@keyframes float-heart-1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(4px, -8px) scale(1.15); }
+}
+
+/* Main content container */
+.container {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 80px 60px;
+    background-color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 60px 40px;
+    }
+}
+
+/* Header styles */
+header {
+    text-align: left;
+    margin-bottom: 60px;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+h1 {
+    font-size: 2.5em;
+    color: #000000;
+    font-weight: 700;
+    text-shadow: none;
+    margin-bottom: 20px;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+}
+
+.subtitle {
+    font-size: 1.2em;
+    color: #666666;
+    font-style: normal;
+    font-weight: 400;
+    margin-bottom: 12px;
+}
+
+.date {
+    font-size: 0.95em;
+    color: #999999;
+    font-weight: 400;
+}
+
+.github-link {
+    margin-top: 16px;
+    font-size: 0.95em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #333333;
+    transition: color 0.2s ease;
+}
+
+.github-link:hover {
+    color: #0066cc;
+}
+
+.github-icon {
+    flex-shrink: 0;
+}
+
+.github-link a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-bottom-color 0.2s ease;
+    font-weight: 600;
+}
+
+.github-link:hover a {
+    border-bottom-color: #0066cc;
+}
+
+/* Section styles */
+section {
+    margin-bottom: 60px;
+}
+
+h2 {
+    font-size: 2em;
+    color: #000000;
+    font-weight: 600;
+    margin-bottom: 24px;
+    margin-top: 48px;
+    border-left: none;
+    padding-left: 0;
+    letter-spacing: -0.02em;
+}
+
+h3 {
+    font-size: 1.3em;
+    color: #000000;
+    font-weight: 600;
+    margin-bottom: 16px;
+    margin-top: 32px;
+}
+
+p {
+    margin-bottom: 24px;
+    text-align: left;
+    color: #333333;
+    font-size: 1em;
+    line-height: 1.8;
+}
+
+a {
+    color: #0066cc;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-bottom-color 0.2s ease;
+}
+
+a:hover {
+    border-bottom-color: #0066cc;
+}
+
+ul, ol {
+    margin-bottom: 24px;
+    padding-left: 24px;
+    color: #333333;
+}
+
+li {
+    margin-bottom: 12px;
+    line-height: 1.7;
+}
+
+strong {
+    font-weight: 600;
+    color: #000000;
+}
+
+/* Hero image section */
+.hero-image-section {
+    margin: 60px 0 80px 0;
+    text-align: center;
+}
+
+.hero-image {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hero-image:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+}
+
+.image-caption {
+    margin-top: 16px;
+    font-size: 0.9em;
+    color: #666666;
+    font-style: italic;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding-top: 60px;
+    margin-top: 80px;
+    border-top: 2px solid #e0e0e0;
+    color: #999999;
+    font-size: 0.9em;
+    position: relative;
+}
+
+/* Pixel Dino Image */
+.pixel-dino {
+    position: absolute;
+    right: 40px;
+    top: -44px;
+    height: 44px;
+    width: auto;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    animation: dino-hop 1s ease-in-out infinite;
+    cursor: pointer;
+}
+
+@keyframes dino-hop {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+.pixel-dino:hover {
+    animation: dino-jump 0.5s ease-in-out;
+}
+
+@keyframes dino-jump {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    body {
+        font-size: 16px;
+    }
+    
+    h1 {
+        font-size: 2.5em;
+    }
+    
+    h2 {
+        font-size: 1.6em;
+    }
+    
+    /* Scale down ASCII elements on mobile */
+    .pixel-robot,
+    .pixel-bird,
+    .pixel-rocket,
+    .pixel-star,
+    .pixel-heart {
+        font-size: 9px;
+    }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #ffffff;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cccccc;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #999999;
+}
+
