@@ -10,7 +10,7 @@ body {
     color: #000000;
     line-height: 1.7;
     overflow-x: hidden;
-    font-size: 18px;
+    font-size: 16px;
     position: relative;
 }
 
@@ -143,27 +143,27 @@ body {
 /* Header styles */
 header {
     text-align: left;
-    margin-bottom: 60px;
+    margin-bottom: 50px;
     padding-bottom: 0;
     border-bottom: none;
 }
 
 h1 {
-    font-size: 2.5em;
+    font-size: 2em;
     color: #000000;
     font-weight: 700;
     text-shadow: none;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     letter-spacing: -0.03em;
-    line-height: 1.1;
+    line-height: 1.2;
 }
 
 .subtitle {
-    font-size: 1.2em;
+    font-size: 1.1em;
     color: #666666;
     font-style: normal;
     font-weight: 400;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .date {
@@ -204,34 +204,34 @@ h1 {
 
 /* Section styles */
 section {
-    margin-bottom: 60px;
+    margin-bottom: 50px;
 }
 
 h2 {
-    font-size: 2em;
+    font-size: 1.5em;
     color: #000000;
     font-weight: 600;
-    margin-bottom: 24px;
-    margin-top: 48px;
+    margin-bottom: 20px;
+    margin-top: 40px;
     border-left: none;
     padding-left: 0;
     letter-spacing: -0.02em;
 }
 
 h3 {
-    font-size: 1.3em;
+    font-size: 1.15em;
     color: #000000;
     font-weight: 600;
-    margin-bottom: 16px;
-    margin-top: 32px;
+    margin-bottom: 12px;
+    margin-top: 28px;
 }
 
 p {
-    margin-bottom: 24px;
+    margin-bottom: 18px;
     text-align: left;
     color: #333333;
     font-size: 1em;
-    line-height: 1.8;
+    line-height: 1.7;
 }
 
 a {

@@ -13,6 +13,10 @@ class GameOfLife {
         this.frameCount = 0;
         this.updateInterval = 8; // Update every 8 frames for slower evolution
         
+        // Track container boundaries for masking
+        this.containerBounds = null;
+        this.updateContainerBounds();
+        
         // Color palette for cells - from Color Hunt
         // https://colorhunt.co/palette/8f87f1c68efde9a5f1fed2e2
         // Purple-pink gradient palette
@@ -41,12 +45,28 @@ class GameOfLife {
         this.animate();
     }
     
+    updateContainerBounds() {
+        const container = document.querySelector('.container');
+        if (container) {
+            const rect = container.getBoundingClientRect();
+            this.containerBounds = {
+                left: rect.left,
+                right: rect.right,
+                top: rect.top,
+                bottom: rect.bottom
+            };
+        }
+    }
+    
     setupCanvas() {
         const resize = () => {
             this.canvas.width = window.innerWidth;
             this.canvas.height = window.innerHeight;
             this.cols = Math.floor(this.canvas.width / this.cellSize);
             this.rows = Math.floor(this.canvas.height / this.cellSize);
+            
+            // Update container bounds on resize
+            this.updateContainerBounds();
             
             // Reinitialize grid on resize
             if (this.grid.length === 0) {
@@ -58,6 +78,7 @@ class GameOfLife {
         
         resize();
         window.addEventListener('resize', resize);
+        window.addEventListener('scroll', () => this.updateContainerBounds());
     }
     
     initializeGrid() {
@@ -260,6 +281,24 @@ class GameOfLife {
         }
     }
     
+    isInsideContainer(row, col) {
+        if (!this.containerBounds) return false;
+        
+        const x = col * this.cellSize;
+        const y = row * this.cellSize;
+        const cellRight = x + this.cellSize;
+        const cellBottom = y + this.cellSize;
+        
+        // Add a buffer zone around the container (2 cells worth)
+        const buffer = this.cellSize * 2;
+        
+        // Check if cell is inside or near container (with buffer)
+        return (x >= this.containerBounds.left - buffer && 
+                cellRight <= this.containerBounds.right + buffer &&
+                y >= this.containerBounds.top - buffer && 
+                cellBottom <= this.containerBounds.bottom + buffer);
+    }
+    
     countNeighbors(row, col) {
         let count = 0;
         
@@ -267,10 +306,16 @@ class GameOfLife {
             for (let j = -1; j <= 1; j++) {
                 if (i === 0 && j === 0) continue;
                 
-                const r = (row + i + this.rows) % this.rows; // Wrap around
-                const c = (col + j + this.cols) % this.cols;
+                const r = row + i;
+                const c = col + j;
                 
-                count += this.grid[r][c];
+                // Check boundaries - treat edges and container area as dead cells
+                if (r >= 0 && r < this.rows && c >= 0 && c < this.cols) {
+                    // Treat cells inside container as always dead
+                    if (!this.isInsideContainer(r, c)) {
+                        count += this.grid[r][c];
+                    }
+                }
             }
         }
         
@@ -281,6 +326,12 @@ class GameOfLife {
         // Apply Conway's Game of Life rules
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
+                // Kill any cells inside the container area
+                if (this.isInsideContainer(i, j)) {
+                    this.nextGrid[i][j] = 0;
+                    continue;
+                }
+                
                 const neighbors = this.countNeighbors(i, j);
                 const cell = this.grid[i][j];
                 
@@ -316,11 +367,14 @@ class GameOfLife {
             for (let j = -1; j <= 1; j++) {
                 if (i === 0 && j === 0) continue;
                 
-                const r = (row + i + this.rows) % this.rows;
-                const c = (col + j + this.cols) % this.cols;
+                const r = row + i;
+                const c = col + j;
                 
-                if (this.grid[r][c] === 1) {
-                    neighborColors.push(this.cellColors[r][c]);
+                // Check boundaries - no wrap-around
+                if (r >= 0 && r < this.rows && c >= 0 && c < this.cols) {
+                    if (this.grid[r][c] === 1) {
+                        neighborColors.push(this.cellColors[r][c]);
+                    }
                 }
             }
         }
@@ -335,14 +389,17 @@ class GameOfLife {
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
-        // Draw cells with colors
+        // Draw cells with colors, but skip cells inside or near container
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
-                if (this.grid[i][j] === 1) {
+                if (this.grid[i][j] === 1 && !this.isInsideContainer(i, j)) {
+                    const x = j * this.cellSize;
+                    const y = i * this.cellSize;
+                    
                     this.ctx.fillStyle = this.cellColors[i][j];
                     this.ctx.fillRect(
-                        j * this.cellSize,
-                        i * this.cellSize,
+                        x,
+                        y,
                         this.cellSize - 1,
                         this.cellSize - 1
                     );
